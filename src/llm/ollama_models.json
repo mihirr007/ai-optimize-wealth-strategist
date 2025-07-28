@@ -1,0 +1,72 @@
+[
+  {
+    "display_name": "Llama 3.1 (8B)",
+    "model_name": "llama3.1:8b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Llama 3.1 (70B)",
+    "model_name": "llama3.1:70b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Llama 3.1 (8B) - Instruct",
+    "model_name": "llama3.1:8b-instruct",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Llama 3.1 (70B) - Instruct",
+    "model_name": "llama3.1:70b-instruct",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Mistral (7B)",
+    "model_name": "mistral:7b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Mistral (7B) - Instruct",
+    "model_name": "mistral:7b-instruct",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Mixtral (8x7B)",
+    "model_name": "mixtral:8x7b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Mixtral (8x7B) - Instruct",
+    "model_name": "mixtral:8x7b-instruct",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Neural Chat (7B)",
+    "model_name": "neural-chat:7b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Code Llama (7B)",
+    "model_name": "codellama:7b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Code Llama (13B)",
+    "model_name": "codellama:13b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Phi-3 (3.8B)",
+    "model_name": "phi3:3.8b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Phi-3 (14B)",
+    "model_name": "phi3:14b",
+    "provider": "Ollama"
+  },
+  {
+    "display_name": "Custom Model",
+    "model_name": "-",
+    "provider": "Ollama"
+  }
+] 

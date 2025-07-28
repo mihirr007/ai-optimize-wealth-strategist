@@ -1,0 +1,67 @@
+[
+  {
+    "display_name": "GPT-4o",
+    "model_name": "gpt-4o",
+    "provider": "OpenAI"
+  },
+  {
+    "display_name": "GPT-4o Mini",
+    "model_name": "gpt-4o-mini",
+    "provider": "OpenAI"
+  },
+  {
+    "display_name": "GPT-4 Turbo",
+    "model_name": "gpt-4-turbo",
+    "provider": "OpenAI"
+  },
+  {
+    "display_name": "Claude 3.5 Sonnet",
+    "model_name": "claude-3-5-sonnet-20241022",
+    "provider": "Anthropic"
+  },
+  {
+    "display_name": "Claude 3 Haiku",
+    "model_name": "claude-3-haiku-20240307",
+    "provider": "Anthropic"
+  },
+  {
+    "display_name": "DeepSeek Chat",
+    "model_name": "deepseek-chat",
+    "provider": "DeepSeek"
+  },
+  {
+    "display_name": "DeepSeek Coder",
+    "model_name": "deepseek-coder",
+    "provider": "DeepSeek"
+  },
+  {
+    "display_name": "Gemini 1.5 Pro",
+    "model_name": "gemini-1.5-pro",
+    "provider": "Google"
+  },
+  {
+    "display_name": "Gemini 1.5 Flash",
+    "model_name": "gemini-1.5-flash",
+    "provider": "Google"
+  },
+  {
+    "display_name": "Llama 3.1 (8B)",
+    "model_name": "llama3.1:8b",
+    "provider": "Groq"
+  },
+  {
+    "display_name": "Llama 3.1 (70B)",
+    "model_name": "llama3.1:70b",
+    "provider": "Groq"
+  },
+  {
+    "display_name": "Mixtral 8x7B",
+    "model_name": "mixtral-8x7b-32768",
+    "provider": "Groq"
+  },
+  {
+    "display_name": "Custom Model",
+    "model_name": "-",
+    "provider": "OpenAI"
+  }
+] 
