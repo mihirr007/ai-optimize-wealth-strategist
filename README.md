@@ -12,12 +12,12 @@ A comprehensive multi-agent AI system for wealth management and financial planni
 
 ### Key Features
 
-- ** Multi-Agent AI System**: 17 specialized agents for different aspects of wealth management
-- ** Real-Time Market Data**: Live data from YFinance, Polygon.io, NewsAPI, Finnhub, and FRED
-- ** Privacy-First**: Local LLM inference with Ollama (no data sent to external APIs)
-- ** Technical Analysis**: RSI, MACD, Bollinger Bands, and advanced indicators
-- ** Comprehensive Reporting**: Detailed Markdown and JSON reports with actionable insights
-- ** Fast & Efficient**: Optimized workflow with parallel processing capabilities
+- **Multi-Agent AI System**: 17 specialized agents for different aspects of wealth management
+- **Real-Time Market Data**: Live data from YFinance, Polygon.io, NewsAPI, Finnhub, and FRED
+- **Privacy-First**: Local LLM inference with Ollama (no data sent to external APIs)
+- **Technical Analysis**: RSI, MACD, Bollinger Bands, and advanced indicators
+- **Comprehensive Reporting**: Detailed Markdown and JSON reports with actionable insights
+- **Fast & Efficient**: Optimized workflow with parallel processing capabilities
 
 ---
 
@@ -25,32 +25,32 @@ A comprehensive multi-agent AI system for wealth management and financial planni
 
 The system follows a modular architecture with clear separation of concerns:
 
-\\\
+```text
 ai-optimize-wealth-strategist/
- src/
+  src/
     agents/              # 17 AI agents
-       market_data/     # Market data agents
-       news/           # News and sentiment agents
-       economic/       # Economic data agents
-    data/               # Data models and services
-    graph/              # LangGraph workflow
-    llm/                # LLM integration
-    tools/              # Utility tools
-    utils/              # Helper utilities
- analysis_outputs/       # Generated reports
- pyproject.toml         # Poetry configuration
- env.example           # Environment template
- README.md            # This file
-\\\
+      market_data/       # Market data agents
+      news/              # News and sentiment agents
+      economic/          # Economic data agents
+    data/                # Data models and services
+    graph/               # LangGraph workflow
+    llm/                 # LLM integration
+    tools/               # Utility tools
+    utils/               # Helper utilities
+  analysis_outputs/      # Generated reports
+  pyproject.toml         # Poetry configuration
+  env.example            # Environment template
+  README.md              # This file
+```
 
 ### Workflow Architecture
 
-1. **Client Data Loading**  Load client profile and portfolio
-2. **Market Data Fetching**  Real-time data from multiple APIs
-3. **Agent Execution**  Sequential execution of 17 AI agents
-4. **Signal Aggregation**  Collect all agent recommendations
-5. **Final Analysis**  Portfolio Manager agent synthesis
-6. **Report Generation**  Comprehensive output files
+1. **Client Data Loading**: Load client profile and portfolio
+2. **Market Data Fetching**: Real-time data from multiple APIs
+3. **Agent Execution**: Sequential execution of 17 AI agents
+4. **Signal Aggregation**: Collect all agent recommendations
+5. **Final Analysis**: Portfolio Manager agent synthesis
+6. **Report Generation**: Comprehensive output files
 
 ---
 
@@ -152,26 +152,26 @@ ai-optimize-wealth-strategist/
 ##  Setup Instructions
 
 ### 1. Clone the Repository
-\\\ash
+```bash
 git clone https://github.com/mihirr007/ai-optimize-wealth-strategist.git
 cd ai-optimize-wealth-strategist
-\\\
+```
 
 ### 2. Install Poetry & Dependencies
-\\\ash
+```bash
 # Install Poetry if not already installed
 curl -sSL https://install.python-poetry.org | python3 -
 
 # Install project dependencies
 poetry install
-\\\
+```
 
 ### 3. Set Up API Keys
 - Copy the example environment file:
-  \\\ash
+  ```bash
   cp env.example .env
-  \\\
-- Open \.env\ and fill in your API keys for:
+  ```
+- Open `.env` and fill in your API keys for:
   - **Polygon.io**: [Get free key](https://polygon.io/)
   - **NewsAPI**: [Get free key](https://newsapi.org/)
   - **Finnhub**: [Get free key](https://finnhub.io/)
@@ -181,16 +181,16 @@ poetry install
 ### 4. Install Ollama
 - [Download and install Ollama](https://ollama.ai/download) for your OS
 - Start the Ollama server:
-  \\\ash
+  ```bash
   ollama serve
-  \\\
+  ```
 
 ---
 
 ##  Usage
 
 ### Basic Usage
-\\\ash
+```bash
 # Activate Poetry environment
 poetry shell
 
@@ -199,10 +199,10 @@ poetry run python src/main.py --sample --ollama
 
 # Show detailed agent reasoning in terminal
 poetry run python src/main.py --sample --ollama --show-reasoning
-\\\
+```
 
 ### Command Line Options
-\\\ash
+```bash
 poetry run python src/main.py [OPTIONS]
 
 Options:
@@ -211,29 +211,29 @@ Options:
   --show-reasoning      Display detailed agent reasoning
   --model-name TEXT     Specify Ollama model name
   --help                Show help message
-\\\
+```
 
 ### Output Files
-- **Markdown Report**: \nalysis_outputs/wealth_analysis_YYYY-MM-DD_HH-MM-SS.md\
-- **JSON Report**: \nalysis_outputs/wealth_analysis_YYYY-MM-DD_HH-MM-SS.json\
+- **Markdown Report**: `analysis_outputs/wealth_analysis_YYYY-MM-DD_HH-MM-SS.md`
+- **JSON Report**: `analysis_outputs/wealth_analysis_YYYY-MM-DD_HH-MM-SS.json`
 
 ---
 
 ##  Sample Output
 
 ### Terminal Display
-\\\
- START NODE: Initializing wealth management workflow...
- Loading client profile and portfolio...
- Fetching real-time market data for 5 symbols...
- Running 17 AI agents sequentially...
- Agent 1/17: Risk Profiler Agent - Analyzing risk tolerance...
- Agent 2/17: Passive Indexing Agent - Evaluating index strategies...
+```text
+START NODE: Initializing wealth management workflow...
+Loading client profile and portfolio...
+Fetching real-time market data for 5 symbols...
+Running 17 AI agents sequentially...
+Agent 1/17: Risk Profiler Agent - Analyzing risk tolerance...
+Agent 2/17: Passive Indexing Agent - Evaluating index strategies...
 ...
- FINAL ANALYSIS: Portfolio Manager Agent synthesizing all signals...
- Saving comprehensive report to analysis_outputs/
- Analysis complete! Check the generated reports.
-\\\
+FINAL ANALYSIS: Portfolio Manager Agent synthesizing all signals...
+Saving comprehensive report to analysis_outputs/
+Analysis complete! Check the generated reports.
+```
 
 ### Report Contents
 - **Executive Summary**: High-level recommendations
@@ -252,57 +252,57 @@ Options:
 ##  Updating & Pushing to GitHub
 
 ### 1. Initialize Git (if not already done)
-\\\ash
+```bash
 git init
 git add .
 git commit -m "Initial commit"
-\\\
+```
 
 ### 2. Add Remote and Push
-\\\ash
+```bash
 git remote add origin https://github.com/mihirr007/ai-optimize-wealth-strategist.git
 git branch -M main
 git push -u origin main
-\\\
+```
 
 ---
 
 ##  Testing & Development
 
 ### Test Individual Components
-\\\ash
+```bash
 # Test market data APIs
 poetry run python -c "from src.data.market_data_service import market_data_service; print(market_data_service.get_comprehensive_market_data(['AAPL', 'MSFT']))"
 
 # Test Ollama integration
 poetry run python -c "from src.utils.ollama import ensure_ollama_and_model; print(ensure_ollama_and_model('llama3.1:8b'))"
-\\\
+```
 
 ### Development Setup
-\\\ash
+```bash
 # Install development dependencies
 poetry install
 
 # Run with debugging
 poetry run python src/main.py --sample --ollama --show-reasoning
-\\\
+```
 
 ---
 
 ##  Contributing
 
 1. **Fork the repository**
-2. **Create a feature branch**: \git checkout -b feature/amazing-feature\
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
 3. **Make your changes** and add tests if needed
-4. **Run tests**: \poetry run python -m pytest\
-5. **Commit changes**: \git commit -m 'Add amazing feature'\
-6. **Push to branch**: \git push origin feature/amazing-feature\
+4. **Run tests**: `poetry run python -m pytest`
+5. **Commit changes**: `git commit -m 'Add amazing feature'`
+6. **Push to branch**: `git push origin feature/amazing-feature`
 7. **Open a Pull Request**
 
 ### Adding New Agents
-1. Create agent file in \src/agents/\
+1. Create agent file in `src/agents/`
 2. Implement agent logic following existing patterns
-3. Add agent to \ANALYST_ORDER\ in \src/utils/analysts.py\
+3. Add agent to `ANALYST_ORDER` in `src/utils/analysts.py`
 4. Update tests and documentation
 
 ---
@@ -335,16 +335,16 @@ poetry run python src/main.py --sample --ollama --show-reasoning
 | Issue | Solution |
 |-------|----------|
 | **Ollama Not Found** | Install from [ollama.ai](https://ollama.ai/download) |
-| **API Key Errors** | Check \.env\ file and API key validity |
-| **Model Download Issues** | Run \ollama pull llama3.1:8b\ manually |
-| **Dependency Issues** | Run \poetry install --sync\ |
+| **API Key Errors** | Check `.env` file and API key validity |
+| **Model Download Issues** | Run `ollama pull llama3.1:8b` manually |
+| **Dependency Issues** | Run `poetry install --sync` |
 | **Memory Issues** | Use smaller models or increase RAM |
 
 ### Debug Mode
-\\\ash
+```bash
 # Run with verbose output
 poetry run python src/main.py --sample --ollama --show-reasoning
-\\\
+```
 
 ---
 
