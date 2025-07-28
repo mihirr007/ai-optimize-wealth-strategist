@@ -51,13 +51,107 @@ def sentiment_market_context_agent(state: WealthAgentState, agent_id: str = "sen
                                 print(f"   📊 {source} {symbol}: ${symbol_data['price']:.2f}")
 
     # Enhanced analysis with market data
+    reasoning_parts = []
+    recommendations = []
+    risk_factors = []
+    confidence = 70.0
+    score = 65.0
+    signal_type = "maintain"
+    
+    # Analyze sentiment data
+    if market_data and 'news_sentiment' in market_data:
+        sentiment = market_data['news_sentiment']
+        positive_pct = sentiment.get('positive', 0)
+        negative_pct = sentiment.get('negative', 0)
+        overall_sentiment = sentiment.get('overall_sentiment', 'Neutral')
+        
+        reasoning_parts.append(f"Market sentiment: {positive_pct:.1f}% positive, {negative_pct:.1f}% negative")
+        
+        if positive_pct > 60:
+            signal_type = "increase"
+            confidence += 10
+            score += 15
+            recommendations.append("Consider increasing equity exposure given positive market sentiment")
+        elif negative_pct > 40:
+            signal_type = "decrease"
+            confidence += 5
+            score -= 10
+            recommendations.append("Consider defensive positioning given negative market sentiment")
+            risk_factors.append("High negative sentiment may indicate market stress")
+    
+    # Analyze economic indicators
+    if market_data and 'economic_indicators' in market_data:
+        indicators = market_data['economic_indicators']
+        if indicators:
+            reasoning_parts.append(f"Economic indicators available: {len(indicators)} indicators")
+            
+            # Check specific indicators
+            if 'unemployment_rate' in indicators:
+                unemployment = indicators['unemployment_rate']
+                if 'value' in unemployment:
+                    unemployment_rate = unemployment['value']
+                    reasoning_parts.append(f"Unemployment rate: {unemployment_rate}%")
+                    if unemployment_rate < 4:
+                        recommendations.append("Low unemployment suggests strong economy - favorable for equities")
+                    elif unemployment_rate > 6:
+                        risk_factors.append("High unemployment may indicate economic weakness")
+            
+            if 'federal_funds_rate' in indicators:
+                fed_rate = indicators['federal_funds_rate']
+                if 'value' in fed_rate:
+                    rate = fed_rate['value']
+                    reasoning_parts.append(f"Federal funds rate: {rate}%")
+                    if rate > 5:
+                        recommendations.append("High interest rates may favor defensive positioning")
+    
+    # Analyze sector performance
+    if market_data and 'sector_performance' in market_data:
+        sectors = market_data['sector_performance']
+        if sectors:
+            reasoning_parts.append(f"Sector performance data available: {len(sectors)} sectors")
+            
+            # Find best and worst performing sectors
+            if sectors:
+                best_sector = max(sectors.items(), key=lambda x: x[1])
+                worst_sector = min(sectors.items(), key=lambda x: x[1])
+                
+                reasoning_parts.append(f"Best sector: {best_sector[0]} ({best_sector[1]:+.2f}%)")
+                reasoning_parts.append(f"Worst sector: {worst_sector[0]} ({worst_sector[1]:+.2f}%)")
+                
+                # Sector rotation recommendations
+                if best_sector[1] > 1.0:
+                    recommendations.append(f"Consider overweighting {best_sector[0]} sector showing strong momentum")
+                if worst_sector[1] < -1.0:
+                    recommendations.append(f"Consider underweighting {worst_sector[0]} sector showing weakness")
+                
+                # Calculate average sector performance
+                avg_performance = sum(sectors.values()) / len(sectors)
+                reasoning_parts.append(f"Average sector performance: {avg_performance:+.2f}%")
+                
+                if avg_performance > 0.5:
+                    confidence += 5
+                    score += 10
+                elif avg_performance < -0.5:
+                    confidence += 5
+                    score -= 10
+                    risk_factors.append("Broad sector weakness may indicate market downturn")
+    
+    # Combine all reasoning
+    reasoning = f"Sentiment & Market Context analysis for {len(symbols)} symbols. " + ". ".join(reasoning_parts)
+    
+    # Adjust signal based on analysis
+    if not recommendations:
+        recommendations = ["Monitor market conditions", "Review current allocation"]
+    if not risk_factors:
+        risk_factors = ["Market volatility", "Strategy-specific risks"]
+    
     signal = SentimentMarketContextSignal(
-        signal="maintain",
-        confidence=70.0,
-        reasoning=f"Sentiment & Market Context analysis with real-time market data for {len(symbols)} symbols",
-        recommendations=["Consider Sentiment & Market Context strategies", "Review current allocation"],
-        risk_factors=["Market volatility", "Strategy-specific risks"],
-        score=65.0
+        signal=signal_type,
+        confidence=min(confidence, 95.0),
+        reasoning=reasoning,
+        recommendations=recommendations,
+        risk_factors=risk_factors,
+        score=max(min(score, 100.0), 0.0)
     )
 
     # Create the message

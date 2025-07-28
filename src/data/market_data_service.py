@@ -290,20 +290,95 @@ class MarketDataService:
         structured["ticker_news"] = ticker_news
         structured["news_data"] = []  # Empty since we only want ticker-specific news
         
-        # Process sentiment data
+        # Process sentiment data from both NewsAPI and Finnhub
+        all_sentiment_data = []
+        
+        # Get sentiment from NewsAPI US
         if "newsapi_us" in raw_results and "error" not in raw_results["newsapi_us"]:
-            sentiment = raw_results["newsapi_us"].get("sentiment", {})
+            newsapi_data = raw_results["newsapi_us"]
+            if "sentiment_summary" in newsapi_data:
+                all_sentiment_data.append(newsapi_data["sentiment_summary"])
+            elif "articles" in newsapi_data:
+                # Calculate sentiment from articles
+                articles = newsapi_data["articles"]
+                if articles:
+                    from agents.news.newsapi_us_agent import NewsAPIUSAgent
+                    newsapi_agent = NewsAPIUSAgent()
+                    sentiment_summary = newsapi_agent._calculate_sentiment_summary(articles)
+                    all_sentiment_data.append(sentiment_summary)
+        
+        # Get sentiment from Finnhub
+        if "finnhub" in raw_results and "error" not in raw_results["finnhub"]:
+            finnhub_data = raw_results["finnhub"]
+            if "sentiment_summary" in finnhub_data:
+                all_sentiment_data.append(finnhub_data["sentiment_summary"])
+            elif "articles" in finnhub_data:
+                # Calculate sentiment from articles
+                articles = finnhub_data["articles"]
+                if articles:
+                    from agents.news.finnhub_agent import FinnhubAgent
+                    finnhub_agent = FinnhubAgent()
+                    sentiment_summary = finnhub_agent._calculate_sentiment_summary(articles)
+                    all_sentiment_data.append(sentiment_summary)
+        
+        # Combine sentiment data
+        if all_sentiment_data:
+            total_positive = sum(data.get("positive", 0) for data in all_sentiment_data)
+            total_negative = sum(data.get("negative", 0) for data in all_sentiment_data)
+            total_neutral = sum(data.get("neutral", 0) for data in all_sentiment_data)
+            total_articles = total_positive + total_negative + total_neutral
+            
+            if total_articles > 0:
+                positive_percent = (total_positive / total_articles) * 100
+                negative_percent = (total_negative / total_articles) * 100
+                neutral_percent = (total_neutral / total_articles) * 100
+                
+                # Determine overall sentiment
+                if positive_percent > negative_percent:
+                    overall_sentiment = "Positive"
+                elif negative_percent > positive_percent:
+                    overall_sentiment = "Negative"
+                else:
+                    overall_sentiment = "Neutral"
+                
+                structured["news_sentiment"] = {
+                    "positive": round(positive_percent, 1),
+                    "neutral": round(neutral_percent, 1),
+                    "negative": round(negative_percent, 1),
+                    "overall_sentiment": overall_sentiment
+                }
+                print(f"📊 Sentiment: {positive_percent:.1f}% Positive, {negative_percent:.1f}% Negative, {neutral_percent:.1f}% Neutral")
+            else:
+                structured["news_sentiment"] = {
+                    "positive": 0,
+                    "neutral": 0,
+                    "negative": 0,
+                    "overall_sentiment": "Neutral"
+                }
+        else:
             structured["news_sentiment"] = {
-                "positive": sentiment.get("positive", 0),
-                "neutral": sentiment.get("neutral", 0),
-                "negative": sentiment.get("negative", 0),
-                "overall_sentiment": sentiment.get("overall_sentiment", "Neutral")
+                "positive": 0,
+                "neutral": 0,
+                "negative": 0,
+                "overall_sentiment": "Neutral"
             }
         
         # Process economic indicators
         if "fred" in raw_results and "error" not in raw_results["fred"]:
-            indicators = raw_results["fred"].get("indicators", {})
-            structured["economic_indicators"] = indicators
+            fred_data = raw_results["fred"]
+            if "indicators" in fred_data:
+                indicators = fred_data["indicators"]
+                structured["economic_indicators"] = indicators
+                print(f"📊 FRED: Retrieved {len(indicators)} economic indicators")
+            else:
+                structured["economic_indicators"] = {}
+                print("⚠️  FRED: No indicators data available")
+        else:
+            structured["economic_indicators"] = {}
+            if "fred" in raw_results:
+                print(f"❌ FRED Error: {raw_results['fred'].get('error', 'Unknown error')}")
+            else:
+                print("❌ FRED: No data available")
         
         # Process technical data (if available)
         for symbol in symbols:
@@ -313,6 +388,71 @@ class MarketDataService:
                 tech_data = raw_results["technical_indicators"].get("portfolio", {}).get(symbol, {})
                 if tech_data:
                     structured["technical_data"][symbol] = tech_data
+        
+        # Process sector performance using sector ETFs
+        sector_etfs = {
+            "Technology": "XLK",      # Technology Select Sector SPDR
+            "Healthcare": "XLV",      # Health Care Select Sector SPDR
+            "Financial": "XLF",       # Financial Select Sector SPDR
+            "Consumer Discretionary": "XLY",  # Consumer Discretionary Select Sector SPDR
+            "Consumer Staples": "XLP", # Consumer Staples Select Sector SPDR
+            "Energy": "XLE",          # Energy Select Sector SPDR
+            "Industrial": "XLI",      # Industrial Select Sector SPDR
+            "Materials": "XLB",       # Materials Select Sector SPDR
+            "Real Estate": "XLRE",    # Real Estate Select Sector SPDR
+            "Utilities": "XLU",       # Utilities Select Sector SPDR
+            "Communication Services": "XLC"  # Communication Services Select Sector SPDR
+        }
+        
+        try:
+            # Get sector performance from YFinance
+            if "yfinance" in raw_results and "error" not in raw_results["yfinance"]:
+                yf_data = raw_results["yfinance"].get("portfolio", {})
+                
+                sector_performance = {}
+                for sector_name, etf_symbol in sector_etfs.items():
+                    if etf_symbol in yf_data:
+                        etf_data = yf_data[etf_symbol]
+                        if etf_data and etf_data.get("current_price", 0) > 0:
+                            # Calculate daily change percentage
+                            current_price = etf_data.get("current_price", 0)
+                            previous_price = current_price - etf_data.get("price_change_1d", 0)
+                            
+                            if previous_price > 0:
+                                change_percent = ((current_price - previous_price) / previous_price) * 100
+                                sector_performance[sector_name] = round(change_percent, 2)
+                            else:
+                                sector_performance[sector_name] = 0.0
+                        else:
+                            sector_performance[sector_name] = 0.0
+                    else:
+                        # Try to get ETF data directly
+                        try:
+                            import yfinance as yf
+                            etf = yf.Ticker(etf_symbol)
+                            info = etf.info
+                            if info and 'regularMarketPrice' in info and 'previousClose' in info:
+                                current_price = info['regularMarketPrice']
+                                previous_price = info['previousClose']
+                                if previous_price > 0:
+                                    change_percent = ((current_price - previous_price) / previous_price) * 100
+                                    sector_performance[sector_name] = round(change_percent, 2)
+                                else:
+                                    sector_performance[sector_name] = 0.0
+                            else:
+                                sector_performance[sector_name] = 0.0
+                        except Exception as e:
+                            print(f"⚠️  Could not fetch {etf_symbol} data: {e}")
+                            sector_performance[sector_name] = 0.0
+                
+                structured["sector_performance"] = sector_performance
+                print(f"📊 Sector Performance: Retrieved {len(sector_performance)} sectors")
+            else:
+                structured["sector_performance"] = {}
+                print("⚠️  No YFinance data available for sector performance")
+        except Exception as e:
+            print(f"❌ Error processing sector performance: {e}")
+            structured["sector_performance"] = {}
         
         # Track available and error sources
         for source_name, source_data in raw_results.items():

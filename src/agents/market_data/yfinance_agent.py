@@ -98,11 +98,31 @@ class YFinanceAgent(MarketDataAgent):
             return {"error": str(e), "symbol": symbol}
     
     def get_portfolio_data(self, symbols: List[str]) -> Dict[str, Any]:
-        """Get data for multiple symbols"""
+        """Get data for multiple symbols including sector ETFs"""
         portfolio_data = {}
         
+        # Add sector ETFs to the symbols list
+        sector_etfs = {
+            "XLK": "Technology",
+            "XLV": "Healthcare", 
+            "XLF": "Financial",
+            "XLY": "Consumer Discretionary",
+            "XLP": "Consumer Staples",
+            "XLE": "Energy",
+            "XLI": "Industrial",
+            "XLB": "Materials",
+            "XLRE": "Real Estate",
+            "XLU": "Utilities",
+            "XLC": "Communication Services"
+        }
+        
+        # Get data for requested symbols
         for symbol in symbols:
             portfolio_data[symbol] = self.get_stock_data(symbol)
+        
+        # Get data for sector ETFs
+        for etf_symbol in sector_etfs.keys():
+            portfolio_data[etf_symbol] = self.get_stock_data(etf_symbol)
         
         return {
             "portfolio": portfolio_data,
